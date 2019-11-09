@@ -1,14 +1,10 @@
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace FluentAssertDemo.NUnit
 {
     public class CurrencyConverterTests
     {
-        [SetUp]
-        public void Setup()
-        {
-        }
-
         [Test]
         public void DollarsToCents_Succeeds()
         {
@@ -16,7 +12,12 @@ namespace FluentAssertDemo.NUnit
 
             string cents = CurrencyConverter.DollarsToCents(dollars);
 
-            Assert.AreEqual("27¢", cents);
+            cents.Should()
+                .NotStartWith("$", "the dollar sign should be removed")
+                .And.NotStartWith("0", "any leading zeros should be removed")
+                .And.NotContain(".", "the decimal should be removed")
+                .And.EndWith("¢", "the cent sign should be added")
+                .And.Contain("27", "the amount should be included");
         }
     }
 }
